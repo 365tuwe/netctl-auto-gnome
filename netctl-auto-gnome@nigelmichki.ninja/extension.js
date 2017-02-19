@@ -42,10 +42,13 @@ var lastactive = "";
 
 
 //Names of icons for the activities bar
-const NETWORK_CONNECTED = 'network-wireless-signal-excellent-symbolic';
-//const NETWORK_CONNECTED = 'network-wireless';
 const NETWORK_OFFLINE = 'network-wireless-offline-symbolic';
-//const NETWORK_OFFLINE = 'network-offline';
+const NETWORK_SIGNAL_NONE = 'network-wireless-signal-none';
+const NETWORK_SIGNAL_WEAK = 'network-wireless-signal-weak';
+const NETWORK_SIGNAL_OK = 'network-wireless-signal-ok';
+const NETWORK_SIGNAL_GOOD = 'network-wireless-signal-good';
+const NETWORK_SIGNAL_EXCELLENT = 'network-wireless-signal-excellent';
+
 
 const REFRESH_TIME = 3 //seconds
 
@@ -83,24 +86,24 @@ const NetctlSwitcher = new Lang.Class({
     },
 
     _netctlOff: function() {
-    	// Profiles off
+        // Profiles off
         let profiles = this._get_network_profiles();
         this._execute("stop-all")
         for (let i = 0; i < profiles.length; i++) {
-        	this._execute("disable", profiles[i])
+            this._execute("disable", profiles[i])
         }
     },
 
     _netctlOn: function() {
-    	// Profiles on
+        // Profiles on
         let profiles = this._get_network_profiles();
         for (let i = 0; i < profiles.length; i++) {
-        	this._execute("enable", profiles[i])
+            this._execute("enable", profiles[i])
         }
 
         // Start last active profile
         if (lastactive.length > 0) {
-        	this._execute("start", lastactive)
+            this._execute("start", lastactive)
         }
     },
 
@@ -111,7 +114,7 @@ const NetctlSwitcher = new Lang.Class({
     },
 
     _get_connected_networks: function() {
-    	// Get connected networks.  This also sets the last active connection
+        // Get connected networks.  This also sets the last active connection
         let networks = this._execute("list")[1].toString();
         let connected = networks.match(/\*.*/g);
         lastactive = connected;
@@ -123,29 +126,29 @@ const NetctlSwitcher = new Lang.Class({
     },
 
     _execute: function(command, profile = "") {
-    	   let cmdlist = [
-    		'list',
-    		'store',
-			'restore',
-			'stop-all',
-			'start',
-			'stop',
-			'restart',
-			'switch-to',
-			'is-active',
-			'status',
-			'enable',
-			'disable',
-			'reenable',
-			'is-enabled',
-			'edit'];
-    	if (command == "list") {
-    		return GLib.spawn_command_line_sync(netctl_bin + " list");
-    	} else if ((cmd in cmdlist) && (profile in this._get_network_profiles)) {
-	    	return GLib.spawn_command_line_sync(netctl_bin + " " + cmd);
-   		} else {
-			return "";
-		}
+           let cmdlist = [
+            'list',
+            'store',
+            'restore',
+            'stop-all',
+            'start',
+            'stop',
+            'restart',
+            'switch-to',
+            'is-active',
+            'status',
+            'enable',
+            'disable',
+            'reenable',
+            'is-enabled',
+            'edit'];
+        if (command == "list") {
+            return GLib.spawn_command_line_sync(netctl_bin + " list");
+        } else if ((cmd in cmdlist) && (profile in this._get_network_profiles)) {
+            return GLib.spawn_command_line_sync(netctl_bin + " " + cmd);
+        } else {
+            return "";
+        }
     },
 
     _execute_async: function(command) {
@@ -191,7 +194,19 @@ const NetctlSwitcher = new Lang.Class({
         if (this._get_connected_networks() == null) {
             this.icon.icon_name = NETWORK_OFFLINE;
         } else {
-            this.icon.icon_name = NETWORK_CONNECTED;
+            // get signal quality
+            let s = GLib.spawn_command_line_sync("tail -1 /proc/net/wireless | awk '{print $3}'");
+            if (parseFloat(s) == 2) {
+                this.icon.icon_name = NETWORK_SIGNAL_NONE;
+            } else if (parseFloat(s) < 20) {
+                this.icon.icon_name = NETWORK_SIGNAL_WEAK;
+            } else if (parseFloat(s) < 50) {
+                this.icon.icon_name = NETWORK_SIGNAL_OK
+            } else if (parseFloat(s) < 80) {
+                this.icon.icon_name = NETWORK_SIGNAL_GOOD;
+            } else {
+                this.icon.icon_name = NETWORK_SIGNAL_EXCELLENT;
+            }
         }
     },
 
