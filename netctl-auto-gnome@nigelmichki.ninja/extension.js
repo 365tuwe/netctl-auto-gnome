@@ -85,9 +85,9 @@ const NetctlSwitcher = new Lang.Class({
     _netctlOff: function() {
     	// Profiles off
         let profiles = this._get_network_profiles();
-        this._netctl("stop-all")
+        this._execute("stop-all")
         for (let i = 0; i < profiles.length; i++) {
-        	this._netctl("disable", profiles[i])
+        	this._execute("disable", profiles[i])
         }
     },
 
@@ -95,24 +95,24 @@ const NetctlSwitcher = new Lang.Class({
     	// Profiles on
         let profiles = this._get_network_profiles();
         for (let i = 0; i < profiles.length; i++) {
-        	this._netctl("enable", profiles[i])
+        	this._execute("enable", profiles[i])
         }
 
         // Start last active profile
         if (lastactive.length > 0) {
-        	this._netctl("start", lastactive)
+        	this._execute("start", lastactive)
         }
     },
 
     _get_network_profiles: function() {
-        var profileString = this._netctl("list")[1].toString();
+        var profileString = this._execute("list")[1].toString();
         var profileArray = profileString.split("\n")
         return profileArray.splice(0, profileArray.length - 1)
     },
 
     _get_connected_networks: function() {
     	// Get connected networks.  This also sets the last active connection
-        let networks = this._netctl("list")[1].toString();
+        let networks = this._execute("list")[1].toString();
         let connected = networks.match(/\*.*/g);
         lastactive = connected;
         return connected;
@@ -123,10 +123,7 @@ const NetctlSwitcher = new Lang.Class({
     },
 
     _execute: function(command, profile = "") {
-    	if (command == "list") {
-    		return GLib.spawn_command_line_sync(netctl_bin + " list");
-    	}
-    	let cmdlist = [
+    	   let cmdlist = [
     		'list',
     		'store',
 			'restore',
@@ -142,8 +139,12 @@ const NetctlSwitcher = new Lang.Class({
 			'reenable',
 			'is-enabled',
 			'edit'];
-		if (cmd in cmdlist) and (profile in this._get_network_profiles) {
+    	if (command == "list") {
+    		return GLib.spawn_command_line_sync(netctl_bin + " list");
+    	} else if ((cmd in cmdlist) && (profile in this._get_network_profiles)) {
 	    	return GLib.spawn_command_line_sync(netctl_bin + " " + cmd);
+   		} else {
+			return "";
 		}
     },
 
