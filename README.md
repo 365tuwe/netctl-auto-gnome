@@ -1,7 +1,9 @@
 # netctl-auto-gnome #
-This is a Gnome 3 shell extension for [netctl-auto](https://wiki.archlinux.org/index.php/Netctl), the network profile manager for Arch Linux.
+This is a Gnome 3 shell extension for [netctl](https://wiki.archlinux.org/index.php/Netctl), the network profile manager for Arch Linux.
 
-This extension was originally the work of Tjaart van der Walt (tjaartvdwalt, netctl-gnome-shell-extension). He has transferred this work to me in order to bring it up to current Gnome shell standards and provide netctl-auto support; I thank him for his past pains.
+This extension was originally the work of Tjaart van der Walt (tjaartvdwalt, netctl-gnome-shell-extension). He has transferred this work to Nigel Michki (nigeil, netctl-auto-gnome) in order to bring it up to current Gnome shell standards and provide netctl-auto support; I thank him for his past pains.
+
+I created this fork in order to learn how to find my way around my current Arch Linux setup and to learn how to write gnome shell extensions.
 
 ## Features ##
 * Lists all possible wireless network profiles
@@ -15,8 +17,9 @@ This extension was originally the work of Tjaart van der Walt (tjaartvdwalt, net
 
 ## Dependencies ##
 * netctl
-* wpa\_actiond (for netctl-auto support)
 
 ## Known issues ##
 * Need feedback when switching profiles fails.
 * Perhaps there is a better mechanism for turning wifi on/off
+* Probably doesn't work for you, please use the original instead.
+
