@@ -38,6 +38,7 @@ const PopupMenu = imports.ui.popupMenu;
 
 //Items of interest
 const netctl_bin = '/usr/bin/netctl';
+var lastactive = "";
 
 
 //Names of icons for the activities bar
