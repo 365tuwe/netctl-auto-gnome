@@ -13,7 +13,7 @@ I created this fork in order to learn how to find my way around my current Arch 
 
 **Profile activated**
 
-![screenshot](https://github.com/nigeil/netctl-auto-gnome/blob/master/screenshots/netctl-auto-gnome-screenshot.png?raw=true)
+![screenshot](https://github.com/365tuwe/netctl-auto-gnome/blob/master/screenshots/netctl-auto-gnome-screenshot.png?raw=true)
 
 ## Dependencies ##
 * netctl
